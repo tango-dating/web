@@ -1,0 +1,29 @@
+{
+  "name": "tango-web",
+  "version": "0.1.0",
+  "description": "tango web app for online dating",
+  "main": "index.js",
+  "scripts": {
+    "dev": "parcel index.html",
+    "build": "parcel build index.html",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tango-dating/web.git"
+  },
+  "keywords": [
+    "dating",
+    "online-dating",
+    "love"
+  ],
+  "author": "Viktor A. Rozenko Voitenko",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/tango-dating/web/issues"
+  },
+  "homepage": "https://github.com/tango-dating/web#readme",
+  "devDependencies": {
+    "parcel": "^2.6.0"
+  }
+}
