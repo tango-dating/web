@@ -28,5 +28,8 @@
     "@parcel/transformer-sass": "^2.6.0",
     "elm": "^0.19.1-5",
     "parcel": "^2.6.0"
+  },
+  "dependencies": {
+    "firebase": "^9.8.2"
   }
 }
