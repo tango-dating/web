@@ -2,8 +2,12 @@ module Main exposing (..)
 
 import Auth
 import Browser
-import Html exposing (Html, button, div, h1, text)
+import Html exposing (Html, h1, h4, text)
+import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
+import Matter.Button exposing (button)
+import Matter.Container exposing (app, card, textCenter)
+import Matter.Generic exposing (Element, pack, packAll, unpack)
 
 
 
@@ -15,7 +19,7 @@ main =
     Browser.element
         { init = always ( Auth.Anon, Cmd.none )
         , update = update
-        , view = view
+        , view = view >> unpack
         , subscriptions = always Sub.none
         }
 
@@ -51,23 +55,40 @@ update msg model =
             ( model, Auth.signOut )
 
 
-view : Model -> Html Msg
-view model =
+view : Model -> Element Msg
+view =
+    viewPopupContent
+        >> packAll
+        >> card
+        >> List.singleton
+        >> app
+
+
+viewPopupContent : Model -> List (Html Msg)
+viewPopupContent model =
     case model of
         Auth.Anon ->
-            div []
-                [ h1 [] [ text "Let's dance!" ]
-                , button [ onClick SignIn ] [ text "Google Sign In" ]
-                ]
+            popupCard "Let's dance!"
+                "At last you are here! We've been waiting. Click through and get to dancing."
+                "Sign In with Google"
 
         Auth.Err authError ->
-            div []
-                [ h1 [] [ text <| Maybe.withDefault "something went wrong" authError.message ]
-                , button [ onClick SignIn ] [ text "Google Sign In" ]
-                ]
+            popupCard "Ooops..."
+                "Something went wrong."
+                "Sign In with Google"
 
         Auth.Ok userInfo ->
-            div []
-                [ h1 [] [ text <| "your email: " ++ userInfo.email ]
-                , button [ onClick SignOut ] [ text "Sign Out" ]
-                ]
+            popupCard "You're in."
+                "Let's dance!."
+                "Sign Out"
+
+
+popupCard : String -> String -> String -> List (Html Msg)
+popupCard title body callToAction =
+    [ h1 [] [ text title ]
+    , h4 []
+        [ text body ]
+    , unpack <|
+        textCenter
+            [ button [ onClick SignIn ] [ text callToAction ] ]
+    ]
