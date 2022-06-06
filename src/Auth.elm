@@ -158,8 +158,11 @@ viewAuthCardContent model =
                 "Sign In with Google"
 
         Ok userInfo ->
-            viewAuthCard ("You're in, " ++ userInfo.email)
-                "Let's dance!"
+            viewAuthCard "You're in."
+                ("However, if you wanted to sign out of "
+                    ++ userInfo.email
+                    ++ " for some reason, here's your chance."
+                )
                 SignOut
                 "Sign Out"
 
