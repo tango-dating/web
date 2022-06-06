@@ -2,12 +2,8 @@ module Main exposing (..)
 
 import Auth
 import Browser
-import Html exposing (Html, h1, h4, text)
-import Html.Attributes exposing (style)
-import Html.Events exposing (onClick)
-import Matter.Button exposing (button)
-import Matter.Container exposing (Axis(..), alignCenter, app, card, textCenter)
-import Matter.Generic exposing (Element, packAll, unpack)
+import Html exposing (Html)
+import Matter.Generic exposing (unpack)
 
 
 
@@ -17,10 +13,10 @@ import Matter.Generic exposing (Element, packAll, unpack)
 main : Program () Model Msg
 main =
     Browser.element
-        { init = always ( Auth.Anon, Cmd.none )
+        { init = always init
         , update = update
-        , view = view >> unpack
-        , subscriptions = always Sub.none
+        , view = view
+        , subscriptions = always subscriptions
         }
 
 
@@ -29,7 +25,8 @@ main =
 
 
 type alias Model =
-    Auth.State
+    { authModel : Auth.Model
+    }
 
 
 
@@ -37,8 +34,20 @@ type alias Model =
 
 
 type Msg
-    = SignIn
-    | SignOut
+    = AuthMsg Auth.Msg
+
+
+
+-- INIT
+
+
+init : ( Model, Cmd Msg )
+init =
+    let
+        ( model, cmd ) =
+            Auth.init
+    in
+    ( Model model, cmd |> Cmd.map AuthMsg )
 
 
 
@@ -48,50 +57,27 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        SignIn ->
-            ( model, Auth.signIn )
-
-        SignOut ->
-            ( model, Auth.signOut )
-
-
-view : Model -> Element Msg
-view =
-    viewPopupContent
-        >> packAll
-        >> card
-        >> List.singleton
-        >> alignCenter Horizontal []
-        >> List.singleton
-        >> alignCenter Vertical [ style "height" "100vh" ]
-        >> List.singleton
-        >> app
+        AuthMsg authMsg ->
+            let
+                ( authModel, authCmd ) =
+                    Auth.update authMsg model.authModel
+            in
+            ( Model authModel, authCmd |> Cmd.map AuthMsg )
 
 
-viewPopupContent : Model -> List (Html Msg)
-viewPopupContent model =
-    case model of
-        Auth.Anon ->
-            popupCard "Let's Tango!"
-                "At last you are here! We've been waiting. Click through and get to dancing."
-                "Sign In with Google"
 
-        Auth.Err authError ->
-            popupCard "Ooops..."
-                (Maybe.withDefault "Something went wrong." authError.message)
-                "Sign In with Google"
-
-        Auth.Ok userInfo ->
-            popupCard ("You're in, " ++ userInfo.email)
-                "Let's dance!."
-                "Sign Out"
+-- VIEW
 
 
-popupCard : String -> String -> String -> List (Html Msg)
-popupCard title body callToAction =
-    [ h1 [] [ text title ]
-    , h4 [] [ text body ]
-    , [ button [ onClick SignIn ] [ text callToAction ] ]
-        |> textCenter
-        |> unpack
-    ]
+view : Model -> Html Msg
+view model =
+    Auth.view model.authModel |> unpack |> Html.map AuthMsg
+
+
+
+-- SUBSCRIPTIONS
+
+
+subscriptions : Sub Msg
+subscriptions =
+    Sub.map AuthMsg Auth.subscriptions
