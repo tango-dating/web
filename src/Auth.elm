@@ -1,7 +1,8 @@
 port module Auth exposing
     ( Model(..)
-    , Msg
+    , Msg(..)
     , init
+    , ok
     , subscriptions
     , update
     , view
@@ -46,6 +47,16 @@ type Model
     | Ok UserInfo
 
 
+ok : Model -> a -> a -> a
+ok model x y =
+    case model of
+        Ok _ ->
+            x
+
+        _ ->
+            y
+
+
 
 -- MSG
 
@@ -61,9 +72,9 @@ type Msg
 -- INIT
 
 
-init : ( Model, Cmd Msg )
+init : Model
 init =
-    ( Anon, Cmd.none )
+    Anon
 
 
 
