@@ -27,3 +27,5 @@ This app is convenient to develop and release thanks to
 - [parcel](https://parceljs.org/)
 - [firebase](https://firebase.google.com/)
 - [prettier](https://prettier.io/)
+- [node-test-runner](https://github.com/rtfeldman/node-test-runner)
+- [elm-test](https://package.elm-lang.org/packages/elm-explorations/test/latest/)
