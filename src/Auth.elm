@@ -6,11 +6,17 @@ port module Auth exposing
     , signOut
     )
 
+-- PORTS
+
 
 port signInPort : () -> Cmd msg
 
 
 port signOutPort : () -> Cmd msg
+
+
+
+-- TYPES
 
 
 type State
@@ -31,6 +37,10 @@ type alias UserInfo =
     , email : String
     , uid : String
     }
+
+
+
+-- COMMANDS
 
 
 signIn : Cmd msg

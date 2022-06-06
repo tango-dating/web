@@ -1,6 +1,12 @@
-module Matter.Container exposing (app, card, textCenter)
+module Matter.Container exposing
+    ( Axis(..)
+    , alignCenter
+    , app
+    , card
+    , textCenter
+    )
 
-import Html exposing (div)
+import Html exposing (Attribute, div)
 import Html.Attributes exposing (class)
 import Matter.Generic exposing (Element, pack, unpackAll)
 
@@ -11,6 +17,11 @@ import Matter.Generic exposing (Element, pack, unpackAll)
 
 type alias Container msg =
     List (Element msg) -> Element msg
+
+
+type Axis
+    = Vertical
+    | Horizontal
 
 
 
@@ -30,6 +41,22 @@ card =
 textCenter : Container msg
 textCenter =
     withClass "mr-text-center"
+
+
+alignCenter : Axis -> List (Attribute msg) -> Container msg
+alignCenter axis attributes =
+    let
+        axisClass =
+            case axis of
+                Vertical ->
+                    "mr-align-center-y"
+
+                Horizontal ->
+                    "mr-align-center-x"
+    in
+    unpackAll
+        >> div ([ class "mr-align-center", class axisClass ] ++ attributes)
+        >> pack
 
 
 

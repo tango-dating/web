@@ -3,11 +3,11 @@ module Main exposing (..)
 import Auth
 import Browser
 import Html exposing (Html, h1, h4, text)
-import Html.Attributes exposing (class)
+import Html.Attributes exposing (style)
 import Html.Events exposing (onClick)
 import Matter.Button exposing (button)
-import Matter.Container exposing (app, card, textCenter)
-import Matter.Generic exposing (Element, pack, packAll, unpack)
+import Matter.Container exposing (Axis(..), alignCenter, app, card, textCenter)
+import Matter.Generic exposing (Element, packAll, unpack)
 
 
 
@@ -61,6 +61,10 @@ view =
         >> packAll
         >> card
         >> List.singleton
+        >> alignCenter Horizontal []
+        >> List.singleton
+        >> alignCenter Vertical [ style "height" "100vh" ]
+        >> List.singleton
         >> app
 
 
@@ -68,17 +72,17 @@ viewPopupContent : Model -> List (Html Msg)
 viewPopupContent model =
     case model of
         Auth.Anon ->
-            popupCard "Let's dance!"
+            popupCard "Let's Tango!"
                 "At last you are here! We've been waiting. Click through and get to dancing."
                 "Sign In with Google"
 
         Auth.Err authError ->
             popupCard "Ooops..."
-                "Something went wrong."
+                (Maybe.withDefault "Something went wrong." authError.message)
                 "Sign In with Google"
 
         Auth.Ok userInfo ->
-            popupCard "You're in."
+            popupCard ("You're in, " ++ userInfo.email)
                 "Let's dance!."
                 "Sign Out"
 
@@ -86,9 +90,8 @@ viewPopupContent model =
 popupCard : String -> String -> String -> List (Html Msg)
 popupCard title body callToAction =
     [ h1 [] [ text title ]
-    , h4 []
-        [ text body ]
-    , unpack <|
-        textCenter
-            [ button [ onClick SignIn ] [ text callToAction ] ]
+    , h4 [] [ text body ]
+    , [ button [ onClick SignIn ] [ text callToAction ] ]
+        |> textCenter
+        |> unpack
     ]
